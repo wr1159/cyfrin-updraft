@@ -8,7 +8,9 @@ contract FundMeTest is Test {
     FundMe fundMe;
 
     function setUp() external {
-        fundMe = new FundMe(address(0));
+        fundMe = new FundMe(
+            address(0xB23073b56725814Cf5eFF3439C24B2Ac1EA1144e) // sepolia price feed
+        );
     }
 
     function testMinimumDollarIsFive() public view {
@@ -17,5 +19,10 @@ contract FundMeTest is Test {
 
     function testOwnerIsDeployer() public view {
         assertEq(fundMe.getOwner(), address(this));
+    }
+
+    function testPriceFeedVersionIsAccurate() public view {
+        uint256 version = fundMe.getVersion();
+        assertEq(version, 0);
     }
 }
