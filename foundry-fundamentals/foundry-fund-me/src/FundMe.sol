@@ -110,7 +110,8 @@ contract FundMe {
     }
 
     function getVersion() public view returns (uint256) {
-        return s_priceFeed.version();
+        AggregatorV3Interface priceFeed = AggregatorV3Interface(s_priceFeed);
+        return priceFeed.version();
     }
 
     function getFunder(uint256 index) public view returns (address) {

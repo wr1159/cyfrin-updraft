@@ -3,14 +3,14 @@ pragma solidity ^0.8.18;
 
 import {Test, console} from "forge-std/Test.sol";
 import {FundMe} from "../src/FundMe.sol";
+import {DeployFundMe} from "../script/FundMe.s.sol";
 
 contract FundMeTest is Test {
     FundMe fundMe;
+    DeployFundMe deployFundMe = new DeployFundMe();
 
     function setUp() external {
-        fundMe = new FundMe(
-            address(0xB23073b56725814Cf5eFF3439C24B2Ac1EA1144e) // sepolia price feed
-        );
+        fundMe = deployFundMe.run();
     }
 
     function testMinimumDollarIsFive() public view {
@@ -18,11 +18,11 @@ contract FundMeTest is Test {
     }
 
     function testOwnerIsDeployer() public view {
-        assertEq(fundMe.getOwner(), address(this));
+        assertEq(fundMe.getOwner(), msg.sender);
     }
 
     function testPriceFeedVersionIsAccurate() public view {
         uint256 version = fundMe.getVersion();
-        assertEq(version, 0);
+        assertEq(version, 4);
     }
 }
