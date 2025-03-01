@@ -12,6 +12,13 @@ contract FundMeTest is Test {
     uint256 STARTING_BALANCE = 1 ether;
     uint256 SEND_VALUE = 0.1 ether;
 
+    modifier funded() {
+        vm.prank(alice);
+        fundMe.fund{value: SEND_VALUE}();
+        assert(address(fundMe).balance > 0);
+        _;
+    }
+
     function setUp() external {
         fundMe = deployFundMe.run();
         vm.deal(alice, STARTING_BALANCE);
@@ -40,5 +47,10 @@ contract FundMeTest is Test {
         fundMe.fund{value: SEND_VALUE}();
         uint256 amountFunded = fundMe.getAddressToAmountFunded(alice);
         assertEq(amountFunded, SEND_VALUE);
+    }
+
+    function testOnlyOwnerCanWithdraw() public funded {
+        vm.expectRevert();
+        fundMe.withdraw();
     }
 }
