@@ -11,6 +11,7 @@ contract FundMeTest is Test {
     address alice = makeAddr("alice");
     uint256 STARTING_BALANCE = 1 ether;
     uint256 SEND_VALUE = 0.1 ether;
+    uint256 constant GAS_PRICE = 1;
 
     modifier funded() {
         vm.prank(alice);
@@ -55,13 +56,23 @@ contract FundMeTest is Test {
     }
 
     function testWithdrawFromASingleFunder() public funded {
+        // Arrange
         uint256 startingFundMeBalance = address(fundMe).balance;
         uint256 startingOwnerBalance = fundMe.getOwner().balance;
 
+        vm.txGasPrice(GAS_PRICE);
+        uint256 gasStart = gasleft();
+
+        // Act
         vm.startPrank(fundMe.getOwner());
         fundMe.withdraw();
-
         vm.stopPrank();
+
+        uint256 gasEnd = gasleft();
+        uint256 gasUsed = (gasStart - gasEnd) * tx.gasprice;
+        console.log("Withdraw consumed: %d gas", gasUsed);
+
+        // Assert
         uint256 endingFundMeBalance = address(fundMe).balance;
         uint256 endingOwnerBalance = fundMe.getOwner().balance;
         assertEq(endingFundMeBalance, 0);
