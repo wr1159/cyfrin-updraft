@@ -44,7 +44,7 @@ ifeq ($(findstring --network sepolia,$(ARGS)),--network sepolia)
 endif
 
 deploy-sepolia:
-	@forge script script/DeployFundMe.s.sol:DeployFundMe $(NETWORK_ARGS)
+	forge script script/DeployFundMe.s.sol:DeployFundMe $(NETWORK_ARGS)
 
 # As of writing, the Alchemy zkSync RPC URL is not working correctly 
 deploy-zk:
@@ -58,7 +58,7 @@ deploy-zk-sepolia:
 SENDER_ADDRESS := <sender's address>
  
 fund:
-	@forge script script/Interactions.s.sol:FundFundMe --sender $(SENDER_ADDRESS) $(NETWORK_ARGS)
+	forge script script/Interactions.s.sol:FundFundMe --sender $(SENDER_ADDRESS) $(NETWORK_ARGS)
 
 withdraw:
-	@forge script script/Interactions.s.sol:WithdrawFundMe --sender $(SENDER_ADDRESS) $(NETWORK_ARGS)
+	forge script script/Interactions.s.sol:WithdrawFundMe --sender $(SENDER_ADDRESS) $(NETWORK_ARGS)
