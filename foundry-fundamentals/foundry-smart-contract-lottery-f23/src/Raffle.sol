@@ -2,6 +2,8 @@
 
 pragma solidity ^0.8.18;
 
+error Raffle_NotEnoughEthSent();
+
 /**
  * @title A sample Raffle Contract
  * @author Cyfrin / wr1159
@@ -15,7 +17,10 @@ contract Raffle {
         i_entranceFee = entranceFee;
     }
 
-    function enterRaffle() public payable {}
+    function enterRaffle() external payable {
+        // require(msg.value >= i_entranceFee, "Not enough ETH sent");
+        if (msg.value < i_entranceFee) revert Raffle_NotEnoughEthSent();
+    }
 
     function pickWinner() public {}
 
