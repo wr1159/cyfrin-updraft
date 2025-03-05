@@ -14,3 +14,6 @@
 [submodule "foundry-fundamentals/foundry-fund-me/lib/foundry-devops"]
 	path = foundry-fundamentals/foundry-fund-me/lib/foundry-devops
 	url = https://github.com/Cyfrin/foundry-devops
+[submodule "foundry-fundamentals/foundry-smart-contract-lottery-f23/lib/forge-std"]
+	path = foundry-fundamentals/foundry-smart-contract-lottery-f23/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
