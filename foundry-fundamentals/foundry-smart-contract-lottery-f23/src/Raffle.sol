@@ -5,8 +5,6 @@ import {VRFCoordinatorV2Interface} from "chainlink/src/v0.8/vrf/interfaces/VRFCo
 
 import {VRFConsumerBaseV2} from "chainlink/src/v0.8/vrf/VRFConsumerBaseV2.sol";
 
-error Raffle_NotEnoughEthSent();
-
 /**
  * @title A sample Raffle Contract
  * @author Cyfrin / wr1159
@@ -14,20 +12,23 @@ error Raffle_NotEnoughEthSent();
  * @dev It implements Chainlink VRFv2.5 and Chainlink Automation
  */
 contract Raffle is VRFConsumerBaseV2 {
+    error Raffle_NotEnoughEthSent();
+    error Raffle__TransferFailed();
+
     uint256 private immutable i_entranceFee;
     // @dev Duration of the lottery in seconds
     uint256 private immutable i_interval;
     uint256 private s_lastTimeStamp;
     address payable[] private s_players;
-    bytes32 private immutable i_gasLane;
+    address payable private s_recentWinner;
 
     // Chainlink VRF related variables
     VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
     uint256 private immutable i_subscriptionId;
-    uint16 private constant REQUEST_CONFIRMATIONS = 3;
+    bytes32 private immutable i_gasLane;
     uint32 private immutable i_callbackGasLimit;
-
     uint32 private constant NUM_WORDS = 1;
+    uint16 private constant REQUEST_CONFIRMATIONS = 3;
 
     event EnteredRaffle(address indexed player);
 
@@ -74,7 +75,15 @@ contract Raffle is VRFConsumerBaseV2 {
     function fulfillRandomWords(
         uint256 requestId,
         uint256[] memory randomWords
-    ) internal override {}
+    ) internal override {
+        uint256 indexOfWinner = randomWords[0] % s_players.length;
+        address payable winner = s_players[indexOfWinner];
+        s_recentWinner = winner;
+        (bool success, ) = winner.call{value: address(this).balance}("");
+        if (!success) {
+            revert Raffle__TransferFailed();
+        }
+    }
 
     /** Getter Function */
 
